@@ -36,7 +36,9 @@ st.title("Speech Generator")
 
 topic = st.text_input("Enter a topic: ")
 # Create the first chain to generate the title
-first_chain = title_prompt | llm | StrOutputParser()
+    # first_chain = title_prompt | llm | StrOutputParser()
+# Create the first chain to generate the title and print it
+first_chain = title_prompt | llm | StrOutputParser() | (lambda title : (st.write(title), title)[1])
 # Pass the output of the first chain as input to the second chain
 second_chain = speech_prompt | llm
 final_chain = first_chain | second_chain
