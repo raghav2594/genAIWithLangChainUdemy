@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 import streamlit as st
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 
 load_dotenv()
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
@@ -28,7 +28,10 @@ speech_prompt = PromptTemplate(
     template = 
     """
     You need to write a {emotion} speech of 350 words 
-     for the following title: {title}    
+     for the following title: {title} 
+     Format the output with 2 keys: "title" and "speech" and 
+     fill them with the respective values. The output should be in JSON format.
+
     """
 )
 
@@ -41,9 +44,9 @@ emotion = st.selectbox("Select the emotion for the speech:", ["Inspiring", "Moti
 # Create the first chain to generate the title and print it
 first_chain = title_prompt | llm | StrOutputParser() | (lambda title : (st.write(title), title)[1])
 # Pass the output of the first chain as input to the second chain
-second_chain = speech_prompt | llm
+second_chain = speech_prompt | llm | JsonOutputParser()
 final_chain = first_chain | (lambda title: {"title": title, "emotion": emotion}) | second_chain
 if topic and emotion:
     # Invoke the final chain with the user input
     response = final_chain.invoke({"topic": topic})
-    st.write(response.content)
+    st.write(response)
