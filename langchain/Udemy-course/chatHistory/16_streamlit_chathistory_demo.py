@@ -5,6 +5,7 @@ import streamlit as st
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+
 load_dotenv()
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -35,3 +36,4 @@ if input:
     response = chain_with_history.invoke(input  = {"input": input},
                                          config ={"configurable" : {"session_id" : "abc123"}})
     st.write(response.content)
+    st.write(history_for_chain)
